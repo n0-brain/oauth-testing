@@ -30,12 +30,13 @@ class OAuthSignIn(object):
             for provider_class in self.__subclasses__():
                 provider = provider_class()
                 self.providers[provider.provider_name] = provider
+                print(provider)
         return self.providers[provider_name]
 
 
 class GitHubSignIn(OAuthSignIn):
     def __init__(self):
-        super(GitHubSignIn, self).__init__('facebook')
+        super(GitHubSignIn, self).__init__('github')
         self.service = OAuth2Service(
             name='github',
             client_id=self.consumer_id,
@@ -56,19 +57,10 @@ class GitHubSignIn(OAuthSignIn):
         def decode_json(payload):
             return json.loads(payload.decode('utf-8'))
 
-        if 'code' not in request.args:
-            return None, None, None
-        oauth_session = self.service.get_auth_session(
-            data={'code': request.args['code'],
-                  'grant_type': 'authorization_code',
-                  'redirect_uri': self.get_callback_url()},
-            decoder=decode_json
-        )
-        me = oauth_session.get('me?fields=id,email').json()
+        print(dir(request))
+        print(request.get_json())
+
         return (
-            'facebook$' + me['id'],
-            me.get('email').split('@')[0],  # Facebook does not provide
-                                            # username, so the email's user
-                                            # is used instead
-            me.get('email')
+            'hi',
+            'hi2'
         )
