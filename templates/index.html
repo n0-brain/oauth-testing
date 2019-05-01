@@ -9,6 +9,7 @@
         {% endfor %}
         {% if current_user.is_authenticated %}
             <h2>Hi, {{ current_user.nickname }}!</h2>
+            <h2>Your latest code is, {{ current_user.code }}!</h2>
             <p><a href="{{ url_for('logout') }}">Logout</a></p>
         {% else %}
             <h2>I don't know you!</h2>

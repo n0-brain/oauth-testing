@@ -30,7 +30,6 @@ class OAuthSignIn(object):
             for provider_class in self.__subclasses__():
                 provider = provider_class()
                 self.providers[provider.provider_name] = provider
-                print(provider)
         return self.providers[provider_name]
 
 
@@ -48,8 +47,9 @@ class GitHubSignIn(OAuthSignIn):
 
     def authorize(self):
         return redirect(self.service.get_authorize_url(
-            scope='email',
+            scope='read:org',
             response_type='code',
+            allow_signup='false',
             redirect_uri=self.get_callback_url())
         )
 
@@ -57,10 +57,8 @@ class GitHubSignIn(OAuthSignIn):
         def decode_json(payload):
             return json.loads(payload.decode('utf-8'))
 
-        print(dir(request))
-        print(request.get_json())
 
         return (
-            'hi',
+            'Kirill',
             'hi2'
         )

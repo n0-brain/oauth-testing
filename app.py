@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template, flash
+from flask import Flask, redirect, url_for, render_template, flash, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user,\
     current_user
@@ -10,8 +10,8 @@ app.config['SECRET_KEY'] = 'top secret!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['OAUTH_CREDENTIALS'] = {
     'github': {
-        'id': '4eda45a95461b151a2a2',
-        'secret': '6af0afca54c8bc3f8f1e94843e9e8a03f0e7a0bd'
+        'id': 'github-id',
+        'secret': 'github-secret'
     }
 }
 
@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nickname = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=True)
+    code = db.Column(db.String(64), nullable=True)
 
 
 @lm.user_loader
@@ -57,8 +58,7 @@ def oauth_callback(provider):
         return redirect(url_for('index'))
     oauth = OAuthSignIn.get_provider(provider)
     username, email = oauth.callback()
-    print(oauth.callback())
-    user = User(nickname=username, email=email)
+    user = User(nickname=username, email=email, code=request.args.get('code'))
     db.session.add(user)
     db.session.commit()
     login_user(user, True)
